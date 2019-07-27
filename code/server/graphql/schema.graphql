@@ -1,0 +1,89 @@
+scalar DateTime
+
+type Query {
+  me: User
+  getUser(id: ID, email: String): User
+  allUsers: [User!]!
+  getBlog(id: ID, title: String): Blog
+  allBlogs: [Blog!]!
+  filterBlogsByString(searchString: String): [Blog!]!
+  filterBlogsByLikes(minLikes: Int): [Blog!]!
+  elasticSearch(searchString: String): [ESData]
+  getComment(id: ID!): Comment
+  allComments: [Comment!]!
+  filterCommentsByString(searchString: String): [Comment!]!
+  filterCommentsByLikes(minLikes: Int): [Comment!]!
+  getTag(id: ID, tag: String): Tag
+  allTags: [Tag!]!
+}
+
+type Mutation {
+  signup(name: String!, password: String!, email: String!): AuthPayload
+  login(password: String!, email: String!): AuthPayload
+  postBlog(title: String!, article: String!): Blog!
+  postComment(content: String!, blogId: ID!): Comment!
+  postTag(tag: String!, blogId: ID!): Tag!
+  updateUser(email: String, name: String, password: String, newEmail: String, phone: String, address: String, interest: String): User
+  updateBlog(id: ID, title: String, newTitle: String, article: String, likes: Int): Blog
+  updateComment(id: ID!, content: String, likes: Int): Comment
+  likeBlog(id: ID, title: String): Blog
+  likeComment(id: ID!): Comment
+  addBlogToTagById(blogId: ID!, tagId: ID!): Tag
+  addBlogToTagByTitle(title: String!, tag: String!): Tag
+  deleteUser(id: ID, email: String): User
+  deleteBlog(id: ID, title: String): Blog
+  deleteComment(id: ID!): Comment
+  deleteTag(id: ID, tag: String): Tag
+}
+
+type ESData {
+  id: ID
+  title: String
+  text: String
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type User {
+  id: ID!
+  createdAt: DateTime!
+  name: String!
+  password: String!
+  email: String!
+  phone: String
+  address: String
+  interest: String
+  blogs: [Blog!]!
+  comments: [Comment!]!
+}
+
+type Blog {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String! 
+  article: String!
+  likes: Int
+  postedBy: User
+  comments: [Comment!]!
+  relatedTag: Tag
+}
+
+type Comment {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  content: String!
+  likes: Int
+  postedBy: User
+  forBlog: Blog
+}
+
+type Tag {
+  id: ID!
+  tag: String!
+  blogs: [Blog!]!
+}
